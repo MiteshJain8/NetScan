@@ -18,6 +18,9 @@ safe_bloom_filter = BloomFilter(capacity=1000, error_rate=0.001)
 for ip in KNOWN_IP_ADDRESSES:
     safe_bloom_filter.add(ip)
 
+# List to track manually added IPs
+added_bad_ips = []
+
 # Function to scan the network using nmap
 def scan_network(network_range):
     nm = nmap.PortScanner()  # Initialize nmap PortScanner object
@@ -77,6 +80,7 @@ def user_interface():
         ip_to_add = st.text_input("Enter the IP to add to the Bad Bloom Filter:", key="add_bad_ip")
         if ip_to_add:
             bad_bloom_filter.add(ip_to_add)
+            added_bad_ips.append(ip_to_add)  # Keep track of added IPs
             st.write(f"IP {ip_to_add} added to the Bad Bloom Filter.")
     
     elif option == "Add IP to Safe Bloom Filter":
@@ -92,8 +96,8 @@ def user_interface():
             st.write(f"IP {ip_to_remove} removed from the Bad Bloom Filter.")
     
     elif option == "Show Bad Bloom Filter Contents":
-        bad_ips = [ip for ip in bad_bloom_filter]
-        st.write("Current Bad Bloom Filter Contents (Risky IPs):", bad_ips)
+        st.write("Current Bad Bloom Filter Contents (IPs added manually):", added_bad_ips)
+   
     
     elif option == "Exit":
         st.write("Exiting program.")
@@ -104,5 +108,5 @@ def main():
     st.title("Bloom Filter for IP Address Management and Network Scanning")
     user_interface()
 
-if _name_ == "_main_":
-    main()
+if __name__ == "__main__":
+    main()
